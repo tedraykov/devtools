@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.2
+
+      - name: Get dependencies
+        run: go mod download
+
+      - name: Build for multiple platforms
+        run: |
+          platforms=("darwin/arm64" "linux/amd64")
+          for platform in "${platforms[@]}"
+          do
+            platform_split=(${platform//\// })
+            GOOS=${platform_split[0]}
+            GOARCH=${platform_split[1]}
+            output_name='dev-setup-$GOOS-$GOARCH'
+            if [ $GOOS = "windows" ]; then
+              output_name+='.exe'
+            fi
+            env GOOS=$GOOS GOARCH=$GOARCH go build -o $output_name
+            zip -r "${output_name}.zip" "$output_name"
+            rm "$output_name"
+          done
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dev-setup-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_name: dev-setup-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_content_type: application/zip
+        strategy:
+          matrix:
+            include:
+              - os: darwin
+                arch: arm64
+              - os: linux
+                arch: amd64
