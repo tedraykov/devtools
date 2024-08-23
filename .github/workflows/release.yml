@@ -17,12 +17,12 @@ jobs:
             arch: amd64
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.23'
+          go-version: '1.22'  # Using the latest stable version as of February 2024
 
       - name: Get dependencies
         run: go mod download
@@ -40,7 +40,7 @@ jobs:
           zip -r "${output_name}.zip" "$output_name"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-${{ matrix.arch }}
           path: dev-setup-${{ matrix.os }}-${{ matrix.arch }}.zip
@@ -53,10 +53,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Create Release and Upload Assets
         env:
