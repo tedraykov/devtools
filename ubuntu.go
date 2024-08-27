@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	. "github.com/tedraykov/dev-setup/scripts"
+	. "github.com/tedraykov/devtools/scripts"
 )
 
 
@@ -148,12 +148,13 @@ func (u *UbuntuTools) InstallOhMyZsh() error {
 func (u *UbuntuTools) InstallDocker() error {
     fmt.Println("Installing Docker...")
     cmds := [][]string{
-        {"sudo", "apt", "update"},
-        {"sudo", "apt", "install", "-y", "apt-transport-https", "ca-certificates", "curl", "software-properties-common"},
-        {"curl", "-fsSL", "https://download.docker.com/linux/ubuntu/gpg", "|", "sudo", "apt-key", "add", "-"},
-        {"sudo", "add-apt-repository", "\"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\""},
-        {"sudo", "apt", "update"},
-        {"sudo", "apt", "install", "-y", "docker-ce"},
+        {"sudo apt-get install ca-certificates curl"},
+        {"sudo install -m 0755 -d /etc/apt/keyrings"},
+        {"sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc"},
+        {"sudo chmod a+r /etc/apt/keyrings/docker.asc"},
+        {"echo \"deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null"},
+        {"sudo apt-get update"},
+        {"sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin"},
     }
 
     for _, cmd := range cmds {
@@ -161,6 +162,21 @@ func (u *UbuntuTools) InstallDocker() error {
             return err
         }
     }
+
+    fmt.Println("Running Docker post-installation configuration...")
+
+    cmds = [][]string{
+        {"sudo groupadd docker"},
+        {"sudo usermod -aG docker $USER"},
+        {"newgrp docker"},
+    }
+
+    for _, cmd := range cmds {
+        if err := u.runCommand(cmd...); err != nil {
+          color.Red("Error running Docker post-installation configuration: %v", err)
+        }
+    }
+
     return nil
 }
 
@@ -277,6 +293,11 @@ func (u *UbuntuTools) ConfigureNeovim() error {
     }
 
     return nil
+}
+
+func (u *UbuntuTools) InstallPoetry() error {
+    fmt.Println("Installing Poetry...")
+    return u.runCommand("curl -sSL https://install.python-poetry.org | python3 -")
 }
 
 func (u *UbuntuTools) runCommand(args ...string) error {

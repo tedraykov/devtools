@@ -1,4 +1,4 @@
-module github.com/tedraykov/dev-setup
+module github.com/tedraykov/devtools
 
 go 1.23
 

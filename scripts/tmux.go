@@ -37,15 +37,18 @@ setw -g pane-base-index 1
 
 bind-key -r f run-shell "tmux neww ~/.local/bin/tmux-sessionizer"
 
+set-window-option -g mode-keys vi
+bind -T copy-mode-vi v send-keys -X begin-selection
+bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'xclip -in -selection clipboard'
+
 # vim-like pane switching
 bind -r j select-pane -U
 bind -r k select-pane -D
 bind -r l select-pane -L
-bind -r ; select-pane -R
-
+bind -r ';' select-pane -R
 
 bind-key -r j run-shell "~/.local/bin/tmux-sessionizer ~/dev/databyte/api"
 bind-key -r k run-shell "~/.local/bin/tmux-sessionizer ~/dev/databyte/scrapers"
 bind-key -r l run-shell "~/.local/bin/tmux-sessionizer ~/dev/databyte/ui"
-bind-key -r ; run-shell "~/.local/bin/tmux-sessionizer ~/dev/databyte/mapx"
+bind-key -r ';' run-shell "~/.local/bin/tmux-sessionizer ~/dev/lazydocker"
 `

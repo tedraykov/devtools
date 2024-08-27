@@ -17,6 +17,7 @@ type Tools interface {
   InstallTmux() error
   InstallNode() error
   InstallPython() error
+  InstallPoetry() error
   InstallNeovim() error
 }
 
@@ -56,6 +57,7 @@ func initialModel() model {
       {title: "go", selected: true},
       {title: "node", selected: true},
       {title: "python", selected: true},
+      {title: "poetry", selected: true},
       {title: "neovim", selected: true},
 		},
 	}
@@ -73,11 +75,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case "ctrl+c", "q":
 				return m, tea.Quit
-			case "up", "k":
+			case "up", "l":
 				if m.osCursor > 0 {
 					m.osCursor--
 				}
-			case "down", "j":
+			case "down", "k":
 				if m.osCursor < len(m.osChoices)-1 {
 					m.osCursor++
 				}
@@ -89,11 +91,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case "ctrl+c", "q":
 				return m, tea.Quit
-			case "up", "k":
+			case "up", "l":
 				if m.toolCursor > 0 {
 					m.toolCursor--
 				}
-			case "down", "j":
+			case "down", "k":
 				if m.toolCursor < len(m.tools)-1 {
 					m.toolCursor++
 				}

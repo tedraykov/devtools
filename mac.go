@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	. "github.com/tedraykov/dev-setup/scripts"
+	. "github.com/tedraykov/devtools/scripts"
 )
 
 type MacOsTools struct {
@@ -198,6 +198,11 @@ func (m *MacOsTools) InstallPython() error {
 func (m *MacOsTools) ConfigureNeovim() error {
 	color.Blue("Configuring Neovim...")
 	return m.runCommand("git", "clone", "https://github.com/tedraykov/init.lua.git", "~/.config/nvim")
+}
+
+func (m *MacOsTools) InstallPoetry() error {
+  color.Blue("Installing Poetry...")
+  return m.runCommand("curl -sSL https://install.python-poetry.org | python3 -")
 }
 
 func (m *MacOsTools) runCommand(args ...string) error {
