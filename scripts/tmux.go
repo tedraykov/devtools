@@ -30,6 +30,7 @@ tmux switch-client -t $selected_name
 const TmuxConfig = `set -ga terminal-overrides ",screen-256color*:Tc"
 set-option -g default-terminal "screen-256color"
 set -g status-style 'bg=#333333 fg=#5eacd3'
+set -g mouse on
 
 # Start windows and panes at 1, not 0
 set -g base-index 1
@@ -42,10 +43,15 @@ bind -T copy-mode-vi v send-keys -X begin-selection
 bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'xclip -in -selection clipboard'
 
 # vim-like pane switching
-bind -r j select-pane -U
+bind -r j select-pane -L
 bind -r k select-pane -D
-bind -r l select-pane -L
+bind -r l select-pane -U
 bind -r ';' select-pane -R
+
+bind -T copy-mode-vi j send-keys -X cursor-left
+bind -T copy-mode-vi k send-keys -X cursor-down
+bind -T copy-mode-vi l send-keys -X cursor-up
+bind -T copy-mode-vi ';' send-keys -X cursor-right
 
 bind-key -r j run-shell "~/.local/bin/tmux-sessionizer ~/dev/databyte/api"
 bind-key -r k run-shell "~/.local/bin/tmux-sessionizer ~/dev/databyte/scrapers"

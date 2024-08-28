@@ -51,6 +51,10 @@ func (t *MacOsTools) Run() error {
 			err = t.InstallPython()
 		case "neovim":
 			err = t.InstallNeovim()
+    case "poetry":
+      err = t.InstallPoetry()
+    case "bitwarden":
+      err = t.InstallBitwarden()
 		default:
 			color.Red("Error: %s is not a valid tool", tool)
 		}
@@ -187,7 +191,12 @@ func (m *MacOsTools) InstallGo() error {
 
 func (m *MacOsTools) InstallNode() error {
 	color.Blue("Installing NVM...")
-	return m.runCommand("brew", "install", "nvm")
+	m.runCommand("brew", "install", "nvm")
+
+  m.runCommand("source ~/.zshrc")
+  m.runCommand("nvm install --lts")
+
+  return nil
 }
 
 func (m *MacOsTools) InstallPython() error {
@@ -203,6 +212,11 @@ func (m *MacOsTools) ConfigureNeovim() error {
 func (m *MacOsTools) InstallPoetry() error {
   color.Blue("Installing Poetry...")
   return m.runCommand("curl -sSL https://install.python-poetry.org | python3 -")
+}
+
+func (m *MacOsTools) InstallBitwarden() error {
+    fmt.Println("Installing Bitwarden...")
+    return m.runCommand("npm install -g @bitwarden/cli")
 }
 
 func (m *MacOsTools) runCommand(args ...string) error {

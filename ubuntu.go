@@ -49,10 +49,13 @@ func (t *UbuntuTools) Run() error {
       err = t.InstallPython()
     case "neovim":
       err = t.InstallNeovim()
+    case "poetry":
+      err = t.InstallPoetry()
+    case "bitwarden":
+      err = t.InstallBitwarden()
     default:
       color.Red("Error: %s is not a valid tool", tool)
     }
-
 
 		if err != nil {
 			color.Red("Error installing %s: %v", tool, err)
@@ -277,7 +280,12 @@ func (u *UbuntuTools) InstallGo() error {
 
 func (u *UbuntuTools) InstallNode() error {
     fmt.Println("Installing NVM...")
-    return u.runCommand("curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh")
+    u.runCommand("curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh")
+
+    u.runCommand("source ~/.zshrc")
+    u.runCommand("nvm install --lts")
+
+    return nil
 }
 
 func (u *UbuntuTools) InstallPython() error {
@@ -298,6 +306,11 @@ func (u *UbuntuTools) ConfigureNeovim() error {
 func (u *UbuntuTools) InstallPoetry() error {
     fmt.Println("Installing Poetry...")
     return u.runCommand("curl -sSL https://install.python-poetry.org | python3 -")
+}
+
+func (u *UbuntuTools) InstallBitwarden() error {
+    fmt.Println("Installing Bitwarden...")
+    return u.runCommand("npm install -g @bitwarden/cli")
 }
 
 func (u *UbuntuTools) runCommand(args ...string) error {

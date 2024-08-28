@@ -19,6 +19,7 @@ type Tools interface {
   InstallPython() error
   InstallPoetry() error
   InstallNeovim() error
+  InstallBitwarden() error
 }
 
 type item struct {
@@ -59,6 +60,7 @@ func initialModel() model {
       {title: "python", selected: true},
       {title: "poetry", selected: true},
       {title: "neovim", selected: true},
+      {title: "bitwarden", selected: true},
 		},
 	}
 }
